@@ -4,22 +4,20 @@ from ..Models.Fileschame import *
 
 
 class ParserFormFile:
-    def __init__(self, path_file: Path, file_schema: FileSchemas, map_data: dict):
+    def __init__(self, path_file: Path, file_schema: FileSchemas):
         self.__path_file: Path = path_file
         self.__file: XlsxFile = XlsxFile(path_file, file_schema)
-        self.__map_data: dict = map_data
+        self.__file_schema: FileSchemas = file_schema
 
     @property
     def file_schema(self) -> FileSchemas:
         return self.__file.map_data
 
-    @property
-    def map_data(self):
-        return self.__map_data
-
     def parser(self):
-        for protocol_name in self.__map_data:
-            target_sheet = self.__file.get_sheet_by_name(protocol_name)
-            for value_name in self.__map_data[protocol_name]:
-                coord = self.__map_data[protocol_name][value_name]
-                self.__map_data[protocol_name][value_name] = target_sheet.cell(row=coord[1], column=coord[0]).value
+        for target_protocol in self.__file_schema.protocols:
+            target_sheet = self.__file.get_sheet_by_name(target_protocol.name)
+
+            for table in target_protocol.tables:
+                for cell in table.cells:
+                    coord = self.__map_data[protocol_name][value_name]
+                    self.__map_data[protocol_name][value_name] = target_sheet.cell(row=coord[1], column=coord[0]).value
