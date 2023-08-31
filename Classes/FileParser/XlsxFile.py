@@ -10,6 +10,8 @@ from ..Models.Fileschame import *
 
 from .JsonFile import JsonFile
 
+from re import findall
+
 
 class XlsxFile(File):
     def __init__(self, path_file: Path, map_data: FileSchemas):
@@ -50,6 +52,9 @@ class XlsxFile(File):
     def get_sheet_by_name(self, name: str):
         return self.__file.get_sheet_by_name(name)
 
+    def target_sheet_by_name(self, name: str):
+        self.__active_sheet = self.__file.get_sheet_by_name(name)
+
     def save(self):
         self.__file.save(self.__path_file)
 
@@ -82,3 +87,7 @@ class XlsxFile(File):
 
     def get_title_sheet(self) -> str:
         return self.__active_sheet.title
+
+    def get_text_in_cell(self, text) -> str:
+        text_list = findall(r"\w+", text)
+        return text_list[0]

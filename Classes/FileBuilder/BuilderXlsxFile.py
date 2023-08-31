@@ -27,6 +27,7 @@ class BuilderXlsxFile(BuilderFile):
             self.__json_data_schema[target_protocol.name] = {}
 
             for id_table, table in enumerate(target_protocol.tables):
+                new_cells = []
                 for id_cell, cell in enumerate(table.cells):
 
                     x = cell.x
@@ -34,23 +35,24 @@ class BuilderXlsxFile(BuilderFile):
 
                     if cell.is_merge:
                         self.__create_merge_cell(x, y, cell.size, cell.text)
-                        self.delete_cell(id_protocol, id_table, id_cell)
                     elif cell.is_data:
                         self.__create_data_cell(x, y, cell.text)
 
                         cell.global_x = x
                         cell.global_y = y
+                        cell.text = self.__file.get_text_in_cell(cell.text)
+
+                        new_cells.append(cell)
 
                     else:
-                        self.delete_cell(id_protocol, id_table, id_cell)
                         self.__file.create_cell(x, y, cell.text)
-
+                self.add_to_table(id_protocol, id_table, new_cells)
                 last_y_cell = y - 2
                 bias += 10
         self.save_file()
 
-    def delete_cell(self, id_protocol: int, id_table: int, id_cell: int):
-        self.__file_schemas.protocols[id_protocol].tables[id_table].cells[id_cell] = None
+    def add_to_table(self, id_protocol: int, id_table: int, new_cells: list):
+        self.__file_schemas.protocols[id_protocol].tables[id_table].cells = new_cells
 
     def __get_json_data_schema(self, sheet, key):
         return self.__json_data_schema[sheet][key]
@@ -60,7 +62,7 @@ class BuilderXlsxFile(BuilderFile):
         return coord is not None
 
     def __create_data_cell(self, x: int, y: int, text: str):
-        text = self.__get_text_in_cell(text)
+        text = self.__file.get_text_in_cell(text)
         if self.__is_cell_ref(text):
             coord_ref_cell = self.__get_json_data_schema(self.__file.get_title_sheet(), text)
             text = self.__create_ref_to_cell(coord_ref_cell[0], coord_ref_cell[1])
@@ -83,15 +85,11 @@ class BuilderXlsxFile(BuilderFile):
 
     def __add_to_schema(self, x: int, y: int, text: str):
         title_sheet = self.__file.get_title_sheet()
-        self.__json_data_schema[title_sheet][self.__get_text_in_cell(text)] = (x, y)
+        self.__json_data_schema[title_sheet][self.__file.get_text_in_cell(text)] = (x, y)
 
     def __create_ref_to_cell(self, x: int, y: int) -> str:
         coord_cell = self.__file.get_coord_cell(x, y)
         return f"={coord_cell}"
-
-    def __get_text_in_cell(self, text) -> str:
-        text_list = findall(r"\w+", text)
-        return text_list[0]
 
     def save_file(self):
         self.__file.save()

@@ -33,8 +33,10 @@ json_map_data_path = Path("Files", "Xlsx", "test.json")
 json_map_data_file = JsonFile(json_map_data_path)
 json_map_data_file.read_file()
 
-parser_exel = ParserFormFile(path_file_xlsx, FileSchemas.model_validate( json_map_data_file.scheme))
+parser_exel = ParserFormFile(path_file_xlsx, FileSchemas.model_validate(json_map_data_file.scheme))
 parser_exel.parser()
+
+print(parser_exel.map_data)
 
 builder_docx = BuilderDocxFile(Path("Files", "Docx", "text_template.docx"), path_file_docx, parser_exel.map_data)
 builder_docx.build()

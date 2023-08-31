@@ -11,18 +11,17 @@ class ParserFormFile:
         self.__map_data: dict = {}
 
     @property
-    def file_schema(self) -> FileSchemas:
-        return self.__file.map_data
+    def map_data(self) -> dict:
+        return self.__map_data
 
     def parser(self):
+        self.__file.read_file()
         for target_protocol in self.__file_schema.protocols:
             keys_value = {}
-            target_sheet = self.__file.get_sheet_by_name(target_protocol.name)
+
+            self.__file.target_sheet_by_name(target_protocol.name)
 
             for table in target_protocol.tables:
                 for cell in table.cells:
-                    keys_value[cell] =
-                    coord = self.__map_data[protocol_name][value_name]
-                    self.__map_data[protocol_name][value_name] = target_sheet.cell(row=coord[1], column=coord[0]).value
-
+                    keys_value[cell.text] = self.__file.get_cell(cell.global_x, cell.global_y).value
             self.__map_data[target_protocol.name] = keys_value
