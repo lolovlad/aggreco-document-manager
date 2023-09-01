@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Start</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+  </head>
+  <body>
+    <main>
+        <h1>Welcome to My Website</h1>  
+        <form method="post" action="/login">
+            <input type="text" name="email"/>
+            <input type="password" name="password"/>
+            <button type="submit">Вход</button>
+            <h2>{{exception}}</h2>
+        </form>
+    </main>
+  </body>
+</html>
