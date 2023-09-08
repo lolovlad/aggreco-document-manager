@@ -1,5 +1,6 @@
 from ..Repository import UserRepository
-from ..database import User, db
+from ..database import db
+from ..Models import User
 from ..Exeptions import PasswordValidException, UserExistException
 
 
@@ -12,6 +13,7 @@ class LoginService:
         if user:
             check_pass = user.verify_password(password)
             if check_pass:
+                user = User.model_validate(user, from_attributes=True)
                 return user
         return None
 

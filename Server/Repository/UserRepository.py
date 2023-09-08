@@ -7,5 +7,5 @@ class UserRepository:
         self.__session: Session = session
 
     def get_user_by_email(self, email: str) -> User | None:
-        user = self.__session.query(User).where(User.email == email).first()
+        user = self.__session.query(User).filter(User.email == email).first()
         return user

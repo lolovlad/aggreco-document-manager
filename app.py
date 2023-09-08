@@ -1,13 +1,18 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 from flask_migrate import Migrate
 from Server.database import db
 
 from Server.Services import LoginService
 from Server.Exeptions import PasswordValidException, UserExistException
+from Server.Blueprints.admin.admin import admin_router
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '2wae3tgv'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.register_blueprint(admin_router, url_prefix="/admin")
+
 db.init_app(app)
 
 
@@ -29,8 +34,9 @@ def login_user():
         user = login_service.login_user(email, password)
         if user is None:
             return render_template("index.html", exception="неправильный логин или пароль")
-        session["user"] = user
-        return render_template("index.html", exception="")
+        session["user"] = user.model_dump()
+        if user.is_superuser:
+            return redirect(url_for("admin.index"))
 
 
 @app.route("/create_user", methods=["GET"])
@@ -52,7 +58,7 @@ def create_user():
         db.session.add(user)
         db.session.commit()
 
-        redirect("/")
+        redirect("index")
 
 
 if __name__ == "__main__":
