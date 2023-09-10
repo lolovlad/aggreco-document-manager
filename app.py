@@ -11,6 +11,8 @@ app.config['SECRET_KEY'] = '2wae3tgv'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+app.config['UPLOAD_FOLDER'] = '/Files'
+
 app.register_blueprint(admin_router, url_prefix="/admin")
 
 db.init_app(app)

@@ -1,0 +1,23 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+
+<form method="post" enctype=multipart/form-data action="/admin/templates/add">
+    <input type=file name=file>
+    <input type="text" name="name" placeholder="имя шаблона">
+    <select name="type">
+        <option disabled>выбирите тип шаблона</option>
+        {% for i in types %}
+            <option value="{{i.id}}">{{i.name}}</option>
+        {% endfor %}
+    </select>
+    <select name="plant">
+        <option disabled>выбирите тип устройство</option>
+        {% for i in plants %}
+            <option value="{{i.id}}">{{i.name}}</option>
+        {% endfor %}
+    </select>
+    <button type=submit>Загрузить</button>
+</form>
+
+{% endblock %}
