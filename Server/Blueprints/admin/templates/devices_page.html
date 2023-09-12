@@ -1,0 +1,20 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+
+{% for device in devices %}
+<div>
+    <p>{{device.name}}</p>
+    <p>{{device.type.name}}</p>
+    <p>{{device.number}}</p>
+    <p>{{device.date_verification}}</p>
+    <p>{{device.date_next_verification}}</p>
+    <p>{{device.certificate_number}}</p>
+</div>
+{% endfor %}
+<div>
+    <a href="{{url_for('.add_devices')}}">добавить прибор</a>
+    <a href="{{url_for('.from_type_devices')}}">добавить новый тип</a>
+</div>
+
+{% endblock %}

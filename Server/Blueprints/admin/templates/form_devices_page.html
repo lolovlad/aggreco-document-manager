@@ -1,0 +1,23 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+{% if is_add %}
+<form method="post" action="{{url_for(url)}}">
+{% else %}
+<form method="post" action="{{url_for(url, id_device=id_dev)}}">
+{% endif %}
+    <input type="text" name="name" placeholder="Название">
+    <select name="type">
+        <option disabled>выбирите тип прибора</option>
+        {% for i in type_dev %}
+            <option value="{{i.id}}">{{i.name}}</option>
+        {% endfor %}
+    </select>
+    <input type="text" name="number" placeholder="Заводской номер">
+    <input type="date" name="date_verification" placeholder="Дата поверки">
+    <input type="date" name="date_next_verification" placeholder="Дата следующей поверки">
+    <input type="text" name="certificate_number" placeholder="Номер свидетельства">
+    <button type=submit>Добавить</button>
+</form>
+
+{% endblock %}

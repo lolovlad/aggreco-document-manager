@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -58,4 +58,25 @@ class Templates(db.Model):
     path_map_data_json_file = Column(String, nullable=False)
     path_form_xlsx_file = Column(String, nullable=False)
 
+    type = relationship("Type")
+    plant = relationship("Plant")
 
+
+class TypeDevice(db.Model):
+    __tablename__ = "type_device"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(32), nullable=False)
+
+
+class Device(db.Model):
+    __tablename__ = "devices"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(32), nullable=False)
+    id_type = Column(ForeignKey("type_device.id"), nullable=False, default=1)
+    number = Column(String(32), nullable=False, default=0)
+    date_verification = Column(Date, nullable=False)
+    date_next_verification = Column(Date, nullable=False)
+    certificate_number = Column(String, nullable=False)
+
+    type = relationship("TypeDevice")

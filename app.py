@@ -5,6 +5,7 @@ from Server.database import db
 from Server.Services import LoginService
 from Server.Exeptions import PasswordValidException, UserExistException
 from Server.Blueprints.admin.admin import admin_router
+from Server.Blueprints.user.user import user_router
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '2wae3tgv'
@@ -14,6 +15,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '/Files'
 
 app.register_blueprint(admin_router, url_prefix="/admin")
+app.register_blueprint(user_router, url_prefix="/user")
 
 db.init_app(app)
 
@@ -39,6 +41,8 @@ def login_user():
         session["user"] = user.model_dump()
         if user.is_superuser:
             return redirect(url_for("admin.index"))
+        else:
+            return redirect(url_for("user.index"))
 
 
 @app.route("/create_user", methods=["GET"])
@@ -47,20 +51,20 @@ def create_user():
         from Server.database import db, User
 
         user = User(
-            name="admin",
-            surname="admin",
-            patronymics="admin",
+            name="test",
+            surname="test",
+            patronymics="test",
 
-            email="lll-ooo-200@mail.ru",
-            job_title="admin",
-            is_superuser=True
+            email="test@mail.ru",
+            job_title="worker",
+            is_superuser=False
         )
 
-        user.password = "admin"
+        user.password = "test"
         db.session.add(user)
         db.session.commit()
 
-        redirect("index")
+        return redirect(url_for("index"))
 
 
 if __name__ == "__main__":

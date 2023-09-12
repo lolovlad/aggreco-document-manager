@@ -1,0 +1,25 @@
+{% extends 'base_user.html' %}
+
+{% block content %}
+
+<form method="POST" action="{{url_for('.create_document', id_template=id_template)}}" enctype=multipart/form-data>
+    <input type=file name=file>
+    {% for protocol in form_scheme.protocols %}
+    <p>протокол {{ protocol.name }}</p>
+        {% for equ in protocol.list_equipment %}
+
+        <p>название {{equ.name}}</p>
+        <p>тип {{equ.type_equip}}</p>
+        <p>точность {{equ.error}}</p>
+
+        <input type="text" name="{{equ.number[2:-2]}}">
+        <input type="text" name="{{equ.certificate[2:-2]}}">
+        <input type="text" name="{{equ.data_start[2:-2]}}">
+        <input type="text" name="{{equ.data_end[2:-2]}}">
+
+        {% endfor %}
+    {% endfor %}
+    <button type="submit">Сгенерировать</button>
+</form>
+
+{% endblock %}

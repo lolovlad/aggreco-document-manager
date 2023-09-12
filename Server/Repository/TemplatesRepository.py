@@ -18,3 +18,11 @@ class TemplatesRepository:
             self.__session.commit()
         except Exception:
             self.__session.rollback()
+
+    def get_templates(self) -> list[Templates] | None:
+        return self.__session.query(Templates).all()
+
+    def get_template(self, id_template: int) -> Templates | None:
+        return self.__session.get(Templates, id_template)
+
+

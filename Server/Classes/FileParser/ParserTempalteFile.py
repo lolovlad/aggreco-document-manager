@@ -36,7 +36,13 @@ class ParserTemplateFile:
                 table_equipment = table
                 table_workers = tables[index_table + 2]
 
-                protocol = self.__create_protocol(f"{id_protocol}", tables_in_protocol, table_equipment, table_workers)
+                key_remark = self.__get_key_remark_field(tables[index_table + 1])
+
+                protocol = self.__create_protocol(f"{id_protocol}",
+                                                  tables_in_protocol,
+                                                  table_equipment,
+                                                  table_workers,
+                                                  key_remark)
 
                 id_protocol += 1
                 tables_in_protocol.clear()
@@ -46,6 +52,8 @@ class ParserTemplateFile:
                 tables_in_protocol.append(table)
                 index_table += 1
 
+    def __get_key_remark_field(self, table: Table):
+        return table[1][1].text[2:-2]
 
 
     def __is_end_protocol(self, cell):
@@ -67,12 +75,13 @@ class ParserTemplateFile:
             ))
         return list_equipment
 
-    def __create_protocol(self, name, tables, table_equipment, table_workers) -> Protocol:
+    def __create_protocol(self, name, tables, table_equipment, table_workers, remark: str) -> Protocol:
         list_equipment = self.__get_list_equipment(table_equipment)
         protocol = Protocol(
             name=name,
             tables=[tb.get_schemas() for tb in tables],
             list_equipment=list_equipment,
+            remark=remark
         )
         protocol.list_workers = self.__get_list_workers(table_workers)
         return protocol
