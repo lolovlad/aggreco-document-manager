@@ -1,36 +1,58 @@
 {% extends 'base_user.html' %}
 
 {% block content %}
-
-<form method="POST" action="{{url_for('.create_document', id_template=id_template)}}" enctype=multipart/form-data>
-    <input type=file name=file>
-    {% for protocol in form_scheme.protocols %}
-    <p>протокол {{ protocol.name }}</p>
-        {% for equ in protocol.list_equipment %}
-
-        <p>название {{equ.name}}</p>
-        <p>тип {{equ.type_equip}}</p>
-        <p>точность {{equ.error}}</p>
-
-        <select name="{{equ.number[2:-2]}}" type-equip="{{equ.type_equip}}">
-            <option disabled>выбирите номер прибора</option>
-            {% for i in equ.num_device %}
-                <option value="{{i.id}}">{{i.num}}</option>
+<div class="container form__template__generate">
+    <form method="POST" action="{{url_for('.create_document', id_template=id_template)}}" enctype=multipart/form-data></form>
+        <div class="list-group">
+            <div class="mb-3">
+                <label for="file" class="form-label">Загрузить таблицу данных</label>
+                <input class="form-control" type="file" id="file">
+            </div>
+            {% for protocol in form_scheme.protocols %}
+                <div class="list-group-item">
+                    <h3>Протокол {{ protocol.name }}</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                              <th scope="col">Название</th>
+                              <th scope="col">Тип</th>
+                              <th scope="col">Tочность</th>
+                              <th>Номер прибора</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for equ in protocol.list_equipment %}
+                            <tr>
+                                <th>{{equ.name}}</th>
+                                <td>{{equ.type_equip}}</td>
+                                <td>{{equ.error}}</td>
+                                <td>
+                                    <select name="{{equ.number[2:-2]}}" type-equip="{{equ.type_equip}}">
+                                        <option disabled>выбирите номер прибора</option>
+                                        {% for i in equ.num_device %}
+                                            <option value="{{i.id}}">{{i.num}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <textarea type="text" name="{{protocol.remark}}" placeholder="Замечания" class="form-control">Нет</textarea>
+                </div>
             {% endfor %}
-        </select>
-
+        </div>
+        {% for j in form_scheme.protocols[0].list_workers %}
+        <div class="mb-3">
+            <select name="user_{{loop.index}}" class="form-select">
+                <option disabled>Выбирите работника</option>
+                {% for i in users %}
+                    <option value="{{i.id}}">{{i.name}} {{i.surname}} {{i.patronymics}}</option>
+                {% endfor %}
+            </select>
+        </div>
         {% endfor %}
-        <textarea type="text" name="{{protocol.remark}}" placeholder="Замечания">Нет</textarea>
-    {% endfor %}
-    {% for j in form_scheme.protocols[0].list_workers %}
-        <select name="user_{{loop.index}}">
-            <option disabled>Выбирите работника</option>
-            {% for i in users %}
-                <option value="{{i.id}}">{{i.name}} {{i.surname}} {{i.patronymics}}</option>
-            {% endfor %}
-        </select>
-    {% endfor %}
-    <button type="submit">Сгенерировать</button>
-</form>
-<script src="{{ url_for('.static', filename='js/main.js') }}"></script>
+    <button type="submit" class="btn btn-primary">Сгенерировать</button>
+    </form>
+</div>
 {% endblock %}

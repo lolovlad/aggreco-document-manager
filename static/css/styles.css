@@ -1,0 +1,17 @@
+.form__sigin{
+    width: 500px;
+    height: 100vh;
+}
+
+.form__sigin__row{
+    height: 70%;
+}
+.table__container{
+    padding-top: 40px;
+    width: 90%;
+}
+
+.form__template__generate{
+    margin-top: 50px;
+    margin-bottom: 50px;
+}

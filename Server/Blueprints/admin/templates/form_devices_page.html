@@ -1,22 +1,46 @@
 {% extends 'base_admin.html' %}
 
 {% block content %}
-{% if is_add %}
-<form method="post" action="{{url_for(url)}}">
-{% else %}
-<form method="post" action="{{url_for(url, id_device=id_dev)}}">
-{% endif %}
-    <input type="text" name="name" placeholder="Название">
-    <select name="type">
-        <option disabled>выбирите тип прибора</option>
-        {% for i in type_dev %}
-            <option value="{{i.id}}">{{i.name}}</option>
-        {% endfor %}
-    </select>
-    <input type="text" name="number" placeholder="Заводской номер">
-    <input type="date" name="date_verification" placeholder="Дата поверки">
-    <input type="date" name="date_next_verification" placeholder="Дата следующей поверки">
-    <input type="text" name="certificate_number" placeholder="Номер свидетельства">
+
+<div class="container justify-content-center form__sigin">
+    <div class="row align-items-center form__sigin__row">
+      <div class="col align-self-center">
+        {% if is_add %}
+            <form method="post" action="{{url_for(url)}}">
+        {% else %}
+            <form method="post" action="{{url_for(url, id_device=id_dev)}}">
+        {% endif %}
+          <div class="mb-3">
+            <label for="name" class="form-label">Название</label>
+            <input type="text" name="name" class="form-control" id="name">
+          </div>
+          <select name="type" class="form-select">
+            <option disabled>выбирите тип прибора</option>
+            {% for i in type_dev %}
+                <option value="{{i.id}}">{{i.name}}</option>
+            {% endfor %}
+          </select>
+          <div class="mb-3">
+            <label for="number" class="form-label">Заводской номер</label>
+            <input type="text" name="number" class="form-control" id="number"/>
+          </div>
+          <div class="mb-3">
+            <label for="date_verification" class="form-label">Дата поверки</label>
+            <input type="date" name="date_verification" class="form-control" id="date_verification"/>
+          </div>
+          <div class="mb-3">
+            <label for="date_next_verification" class="form-label">Дата следующей поверки</label>
+            <input type="date" name="date_next_verification" class="form-control" id="date_next_verification"/>
+          </div>
+          <div class="mb-3">
+            <label for="certificate_number" class="form-label">Номер свидетельства</label>
+            <input type="text" name="certificate_number" class="form-control" id="certificate_number"/>
+          </div>
+            <button type="submit" class="btn btn-primary">Вход</button>
+        </form>
+      </div>
+    </div>
+  </div>
     <button type=submit>Добавить</button>
 </form>
 

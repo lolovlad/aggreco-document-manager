@@ -9,6 +9,7 @@ menu = [
     {'url': '.devices', 'title': "список приборов"}
 ]
 
+
 @admin_router.route("/")
 def index():
     return render_template("admin_main.html", menu=menu, title="главная")
@@ -18,15 +19,19 @@ def index():
 def templates():
     template_service = TemplatesService()
     if request.method == "GET":
+        templates_models = template_service.get_list_templates()
+        return render_template("template_page.html", menu=menu, templates=templates_models)
+
+
+@admin_router.route("/templates/add", methods=["POST", "GET"])
+def add_templates():
+    template_service = TemplatesService()
+    if request.method == 'GET':
         types = [i.model_dump() for i in template_service.get_list_types()]
         plants = [i.model_dump() for i in template_service.get_list_plants()]
-        return render_template("template_page.html", menu=menu, types=types, plants=plants)
+        return render_template("form_template_page.html", menu=menu, types=types, plants=plants)
 
-
-@admin_router.route("/templates/add", methods=["POST"])
-def add_templates():
     if request.method == 'POST':
-        template_service = TemplatesService()
         file = request.files['file']
         if file:
 

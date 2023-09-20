@@ -2,14 +2,31 @@
 
 {% block content %}
 
-{% for templete in templates %}
-<div>
-    <p>{{templete.name}}</p>
-    <p>{{templete.type.name}}</p>
-    <p>{{templete.plant.name}}</p>
-    <p><a href="{{url_for('.download_templates', id_template=templete.id)}}">скачать шаблон</a></p>
-    <p><a href="{{url_for('.create_document', id_template=templete.id)}}">сгенерировать шаблон</a></p>
+<div class="container table__container">
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th scope="col">Название</th>
+                  <th scope="col">Тип</th>
+                  <th scope="col">Установка</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for templete in templates %}
+              <tr>
+                <th>{{templete.name}}</th>
+                <td>{{templete.type.name}}</td>
+                <td>{{templete.plant.name}}</td>
+                <td><a href="{{url_for('.download_templates', id_template=templete.id)}}">скачать таблицу шаблона</a></td>
+                <td><a href="{{url_for('.create_document', id_template=templete.id)}}">сгенерировать документ</a></td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-{% endfor %}
 
 {% endblock %}
