@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for, send_file
 from Server.Services.TemplatesServices import TemplatesService
+from Server.Services.UserService import UserService
 
 user_router = Blueprint("user", __name__, template_folder="templates", static_folder="static")
 
@@ -28,13 +29,24 @@ def download_templates(id_template):
     return send_file_partial()
 
 
-@user_router.route("/form_create_document/form/<id_template>", methods=["GET"])
+@user_router.route("/form_create_document/form/<id_template>", methods=["GET", "POST"])
 def create_document(id_template):
     template_service = TemplatesService()
+    user_service = UserService()
     if request.method == "GET":
         scheme = template_service.get_scheme_template(int(id_template))
-        print(scheme)
-        return render_template("form_document_page.html", menu=menu, form_scheme=scheme, id_template=id_template)
+        scheme = template_service.add_device_to_scheme(scheme)
+        users = user_service.get_list_users()
+        return render_template("form_document_page.html",
+                               menu=menu,
+                               form_scheme=scheme,
+                               id_template=id_template,
+                               users=users)
+    elif request.method == "POST":
+        file = request.files['file']
+        if file:
+            file_template = template_service.generate_document(request.form, file, int(id_template), send_file)
+            return file_template()
 
 
 @user_router.route("/templates/add", methods=["POST"])

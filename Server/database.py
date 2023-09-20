@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -75,8 +77,8 @@ class Device(db.Model):
     name = Column(String(32), nullable=False)
     id_type = Column(ForeignKey("type_device.id"), nullable=False, default=1)
     number = Column(String(32), nullable=False, default=0)
-    date_verification = Column(Date, nullable=False)
-    date_next_verification = Column(Date, nullable=False)
-    certificate_number = Column(String, nullable=False)
+    date_verification = Column(Date, nullable=True, default=None)
+    date_next_verification = Column(Date, nullable=True, default=None)
+    certificate_number = Column(String, nullable=True, default="-")
 
     type = relationship("TypeDevice")

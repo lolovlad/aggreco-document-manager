@@ -12,14 +12,25 @@
         <p>тип {{equ.type_equip}}</p>
         <p>точность {{equ.error}}</p>
 
-        <input type="text" name="{{equ.number[2:-2]}}">
-        <input type="text" name="{{equ.certificate[2:-2]}}">
-        <input type="text" name="{{equ.data_start[2:-2]}}">
-        <input type="text" name="{{equ.data_end[2:-2]}}">
+        <select name="{{equ.number[2:-2]}}" type-equip="{{equ.type_equip}}">
+            <option disabled>выбирите номер прибора</option>
+            {% for i in equ.num_device %}
+                <option value="{{i.id}}">{{i.num}}</option>
+            {% endfor %}
+        </select>
 
         {% endfor %}
+        <textarea type="text" name="{{protocol.remark}}" placeholder="Замечания">Нет</textarea>
+    {% endfor %}
+    {% for j in form_scheme.protocols[0].list_workers %}
+        <select name="user_{{loop.index}}">
+            <option disabled>Выбирите работника</option>
+            {% for i in users %}
+                <option value="{{i.id}}">{{i.name}} {{i.surname}} {{i.patronymics}}</option>
+            {% endfor %}
+        </select>
     {% endfor %}
     <button type="submit">Сгенерировать</button>
 </form>
-
+<script src="{{ url_for('.static', filename='js/main.js') }}"></script>
 {% endblock %}
