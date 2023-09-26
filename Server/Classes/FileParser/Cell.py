@@ -9,7 +9,7 @@ class Cell:
         self.__width: int = right - left
         self.__height: int = bottom - top
         self.__text: str = text
-        self.__re: str = r'{{\w+}}'
+        self.__re: str = r'(?<={{).*?(?=}})'
 
     @property
     def x(self):
@@ -29,13 +29,18 @@ class Cell:
 
     @property
     def text(self):
-        return self.__text
+        text = self.__get_text(self.__text)
+        return text if text is not None else self.__text
 
     def is_merge_cell(self) -> bool:
         return self.__width > 1 or self.__height > 1
 
     def is_data_cell(self) -> bool:
-        return len(findall(self.__re, self.__text)) > 0
+        return self.__get_text(self.__text) is not None
+
+    def __get_text(self, text) -> str | None:
+        text_re = findall(self.__re, text)
+        return text_re[0] if len(text_re) > 0 else None
 
     def get_schemas(self) -> CellSchemas:
         return CellSchemas(

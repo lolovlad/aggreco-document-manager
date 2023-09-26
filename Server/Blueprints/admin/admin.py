@@ -1,8 +1,21 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for
 from Server.Services.TemplatesServices import TemplatesService
 from Server.Services.DeviceServices import DeviceServices
+from flask_login import current_user, login_required
+
 
 admin_router = Blueprint("admin", __name__, template_folder="templates", static_folder="static")
+
+
+@admin_router.before_request
+def is_admin():
+    if current_user.is_authenticated:
+        user_roles = [i.name for i in current_user.user.roles]
+        if "admin" not in user_roles and "super_admin" not in user_roles:
+            return redirect("/")
+    else:
+        return redirect("/")
+
 
 menu = [
     {'url': '.templates', 'title': "шаблоны документов"},
@@ -11,19 +24,24 @@ menu = [
 
 
 @admin_router.route("/")
+@login_required
 def index():
     return render_template("admin_main.html", menu=menu, title="главная")
 
 
 @admin_router.route("/templates", methods=["POST", "GET"])
+@login_required
 def templates():
     template_service = TemplatesService()
     if request.method == "GET":
         templates_models = template_service.get_list_templates()
+        if templates_models is None:
+            templates_models = []
         return render_template("template_page.html", menu=menu, templates=templates_models)
 
 
 @admin_router.route("/templates/add", methods=["POST", "GET"])
+@login_required
 def add_templates():
     template_service = TemplatesService()
     if request.method == 'GET':
@@ -44,12 +62,14 @@ def add_templates():
 
 
 @admin_router.route("/devices", methods=["GET"])
+@login_required
 def devices():
     device_service = DeviceServices()
     return render_template("devices_page.html", menu=menu, devices=device_service.get_list_device())
 
 
 @admin_router.route("/devices/add", methods=["GET", "POST"])
+@login_required
 def add_devices():
     device_service = DeviceServices()
     if request.method == "GET":
@@ -71,6 +91,7 @@ def add_devices():
 
 
 @admin_router.route("/devices/update/<id_device>", methods=["GET", "POST"])
+@login_required
 def update_devices(id_device):
     if request.method == "GET":
         return render_template("form_devices_page.html",
@@ -84,6 +105,7 @@ def update_devices(id_device):
 
 
 @admin_router.route("/form_type_device", methods=["GET", "POST"])
+@login_required
 def from_type_devices():
     device_service = DeviceServices()
     if request.method == "GET":

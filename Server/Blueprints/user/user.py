@@ -1,8 +1,19 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for, send_file
 from Server.Services.TemplatesServices import TemplatesService
 from Server.Services.UserService import UserService
+from flask_login import current_user, login_required
 
 user_router = Blueprint("user", __name__, template_folder="templates", static_folder="static")
+
+
+@user_router.before_request
+def is_user():
+    if current_user.is_authenticated:
+        user_roles = [i.name for i in current_user.user.roles]
+        if "user" not in user_roles:
+            return redirect("/")
+    return redirect("/")
+
 
 menu = [
     {'url': '.templates', 'title': "шаблоны документов"}
@@ -10,11 +21,13 @@ menu = [
 
 
 @user_router.route("/")
+@login_required
 def index():
     return render_template("user_main.html", menu=menu, title="главная")
 
 
 @user_router.route("/templates", methods=["POST", "GET"])
+@login_required
 def templates():
     template_service = TemplatesService()
     if request.method == "GET":
@@ -23,6 +36,7 @@ def templates():
 
 
 @user_router.route("/download_templates/<id_template>", methods=["GET"])
+@login_required
 def download_templates(id_template):
     template_service = TemplatesService()
     send_file_partial = template_service.get_file_to_download(int(id_template), send_file)
@@ -30,6 +44,7 @@ def download_templates(id_template):
 
 
 @user_router.route("/form_create_document/form/<id_template>", methods=["GET", "POST"])
+@login_required
 def create_document(id_template):
     template_service = TemplatesService()
     user_service = UserService()
@@ -50,6 +65,7 @@ def create_document(id_template):
 
 
 @user_router.route("/templates/add", methods=["POST"])
+@login_required
 def add_templates():
     if request.method == 'POST':
         template_service = TemplatesService()

@@ -44,10 +44,10 @@ class Protocol(BaseModel):
     tables: list[TableSchemas] = []
     list_equipment: list[Equipment] = []
     remark: str = ""
-    list_workers: list[Workers] = []
 
 
 class FileSchemas(BaseModel):
     date: str = ""
     object: str = ""
     protocols: list[Protocol] = []
+    list_workers: list[Workers] = []

@@ -1,15 +1,30 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
 
-class User(db.Model):
+class RolesUsers(db.Model):
+    __tablename__ = 'roles_users'
+    __table_args__ = {'extend_existing': True}
+    id = Column(Integer(), primary_key=True)
+    user_id = Column(ForeignKey("users.id"))
+    role_id = Column(ForeignKey("roles.id"))
+
+
+class Role(db.Model):
+    __tablename__ = "roles"
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(80), unique=True)
+    description = Column(String(255))
+
+
+class User(db.Model, UserMixin):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(32), nullable=False)
@@ -22,7 +37,8 @@ class User(db.Model):
     job_title = Column(String, nullable=False)
     painting = Column(String, nullable=True, default="none")
 
-    is_superuser = Column(Boolean, nullable=False, default=False)
+    roles = relationship('Role', secondary="roles_users", backref=db.backref('users', lazy='dynamic'))
+
 
     @property
     def password(self):

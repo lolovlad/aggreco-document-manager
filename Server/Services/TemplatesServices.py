@@ -9,17 +9,16 @@ from ..Classes.FileBuilder.BuilderDocxFile import BuilderDocxFile
 from ..Classes.FileParser.ParserFormFile import ParserFormFile
 from ..Classes.FileParser.JsonFile import JsonFile
 from ..Classes.Models.Fileschame import FileSchemas
+from ..Classes.FileParser.XlsxFileStream import XlsxFileStream
 
 
 from werkzeug.datastructures import FileStorage
-from werkzeug.utils import secure_filename
 from pathlib import Path
 from secrets import choice
 from string import ascii_letters, digits
 from functools import partial
-from re import findall
-import pprint
 from os import remove
+from datetime import datetime
 
 
 class TemplatesService:
@@ -113,8 +112,11 @@ class TemplatesService:
         scheme = self.get_scheme_template(id_template)
 
         self.__add_equip_and_user(scheme, form, map_data)
+        self.__add_date(map_data, form["date"])
+        map_data["object"] = form["object"]
+        file_scheme = FileSchemas.model_validate(scheme)
 
-        parser_file_form = ParserFormFile(path_exel_data, FileSchemas.model_validate(scheme))
+        parser_file_form = ParserFormFile(path_exel_data, file_scheme, XlsxFileStream(file, file_scheme))
         parser_file_form.parser()
 
         path_file_template = Path("Files", "Docx", self.__get_name_file("docx"))
@@ -141,16 +143,16 @@ class TemplatesService:
             for j, equip in enumerate(protocol["list_equipment"]):
                 device = self.__device_repository.get_device(int(form[equipments[i][j]]))
 
-                number = self.__del_braces(equip["number"])
+                number = equip["number"]
 
                 map_data[number] = device.number
-                map_data[self.__del_braces(equip["certificate"])] = device.certificate_number
-                map_data[self.__del_braces(equip["data_start"])] = device.date_verification.strftime("%Y/%m/%d")
-                map_data[self.__del_braces(equip["data_end"])] = device.date_next_verification.strftime("%Y/%m/%d")
+                map_data[equip["certificate"]] = device.certificate_number
+                map_data[equip["data_start"]] = device.date_verification.strftime("%Y/%m/%d")
+                map_data[equip["data_end"]] = device.date_next_verification.strftime("%Y/%m/%d")
 
         map_data["users"] = []
 
-        for number_user in range(len(scheme["protocols"][0]["list_workers"])):
+        for number_user in range(len(scheme["list_workers"])):
             key_worker = f"{self.__name_fild_user}_{number_user + 1}"
             worker_entity = self.__user_repository.get_user(int(form[key_worker]))
             map_data["users"].append({
@@ -160,15 +162,12 @@ class TemplatesService:
 
         return map_data
 
-    def __del_braces(self, key: str) -> str:
-        return key.replace("}", "").replace("{", "")
-
     def __get_equipment(self, scheme: dict) -> dict:
         new_quip = {}
         for i, protocol in enumerate(scheme["protocols"]):
             new_quip[i] = {}
             for j, equip in enumerate(protocol["list_equipment"]):
-                new_quip[i][j] = equip["number"][2:-2]
+                new_quip[i][j] = equip["number"]
         return new_quip
 
     def __save_file_form(self, file: FileStorage) -> Path:
@@ -177,3 +176,11 @@ class TemplatesService:
         self.__save_file(file, path_file_exel)
         return path_file_exel
 
+    def __add_date(self, map_data: dict, date: str):
+        date = datetime.strptime(date, "%Y-%m-%d").date()
+        map_data["date"] = {
+            "d": date.day if date.day > 9 else f"0{date.day}",
+            "y": date.year,
+            "m": date.month if date.month > 9 else f"0{date.month}",
+            "full": date.strftime("%d.%m.%Y")
+        }

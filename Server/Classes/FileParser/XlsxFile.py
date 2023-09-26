@@ -14,9 +14,9 @@ from re import findall
 
 
 class XlsxFile(File):
-    def __init__(self, path_file: Path, map_data: FileSchemas):
+    def __init__(self, path_file: Path | None, map_data: FileSchemas):
         self.__path_file: Path = path_file
-        self.__file: Workbook = Workbook()
+        self._file: Workbook = Workbook()
         self.__map_data: FileSchemas = map_data
         self.__active_sheet: Worksheet = None
 
@@ -32,7 +32,7 @@ class XlsxFile(File):
         return self.__map_data
 
     def read_file(self):
-        self.__file = load_workbook(filename=self.__path_file)
+        self._file = load_workbook(filename=self.__path_file)
 
     def render(self, schemas: dict):
         pass
@@ -50,16 +50,16 @@ class XlsxFile(File):
         pass
 
     def get_sheet_by_name(self, name: str):
-        return self.__file.get_sheet_by_name(name)
+        return self._file.get_sheet_by_name(name)
 
     def target_sheet_by_name(self, name: str):
-        self.__active_sheet = self.__file.get_sheet_by_name(name)
+        self.__active_sheet = self._file.get_sheet_by_name(name)
 
     def save(self):
-        self.__file.save(self.__path_file)
+        self._file.save(self.__path_file)
 
     def create_sheet(self, protocol: Protocol):
-        self.__active_sheet = self.__file.create_sheet(protocol.name)
+        self.__active_sheet = self._file.create_sheet(protocol.name)
 
     def get_cell(self, x: int, y: int):
         return self.__active_sheet.cell(row=y, column=x)

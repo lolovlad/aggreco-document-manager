@@ -2,11 +2,19 @@
 
 {% block content %}
 <div class="container form__template__generate">
-    <form method="POST" action="{{url_for('.create_document', id_template=id_template)}}" enctype=multipart/form-data></form>
+    <form method="POST" action="{{url_for('.create_document', id_template=id_template)}}" enctype=multipart/form-data>
         <div class="list-group">
             <div class="mb-3">
                 <label for="file" class="form-label">Загрузить таблицу данных</label>
-                <input class="form-control" type="file" id="file">
+                <input class="form-control" type="file" id="file" name="file">
+            </div>
+            <div class="mb-3">
+                <label for="date" class="form-label">Дата</label>
+                <input class="form-control" type="date" id="date" name="date">
+            </div>
+            <div class="mb-3">
+                <label for="object" class="form-label">Название установки</label>
+                <input class="form-control" type="text" id="object" name="object">
             </div>
             {% for protocol in form_scheme.protocols %}
                 <div class="list-group-item">
@@ -27,7 +35,7 @@
                                 <td>{{equ.type_equip}}</td>
                                 <td>{{equ.error}}</td>
                                 <td>
-                                    <select name="{{equ.number[2:-2]}}" type-equip="{{equ.type_equip}}">
+                                    <select name="{{equ.number}}">
                                         <option disabled>выбирите номер прибора</option>
                                         {% for i in equ.num_device %}
                                             <option value="{{i.id}}">{{i.num}}</option>
@@ -42,7 +50,7 @@
                 </div>
             {% endfor %}
         </div>
-        {% for j in form_scheme.protocols[0].list_workers %}
+        {% for j in form_scheme.list_workers %}
         <div class="mb-3">
             <select name="user_{{loop.index}}" class="form-select">
                 <option disabled>Выбирите работника</option>

@@ -4,9 +4,9 @@ from ..Models.Fileschame import *
 
 
 class ParserFormFile:
-    def __init__(self, path_file: Path, file_schema: FileSchemas):
+    def __init__(self, path_file: Path, file_schema: FileSchemas, file: XlsxFile):
         self.__path_file: Path = path_file
-        self.__file: XlsxFile = XlsxFile(path_file, file_schema)
+        self.__file: XlsxFile = file
         self.__file_schema: FileSchemas = file_schema
         self.__map_data: dict = {}
 
@@ -23,5 +23,7 @@ class ParserFormFile:
 
             for table in target_protocol.tables:
                 for cell in table.cells:
-                    keys_value[cell.text] = self.__file.get_cell(cell.global_x, cell.global_y).value
+                    print(cell, self.__file.get_cell(cell.global_x, cell.global_y).value)
+                    if keys_value.get(cell.text) is None:
+                        keys_value[cell.text] = self.__file.get_cell(cell.global_x, cell.global_y).value
             self.__map_data[target_protocol.name] = keys_value
