@@ -22,9 +22,14 @@ class BaseUser(BaseModel):
     email: str
     job_title: str
     painting: str
-    roles: list[GetRole]
 
 
 class GetUser(BaseUser):
     id: int
+    roles: list[GetRole]
+
+
+class PostUser(BaseUser):
+    password: str
+    id_role: int
 

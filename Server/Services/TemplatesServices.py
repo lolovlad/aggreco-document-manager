@@ -1,3 +1,5 @@
+import os
+
 from ..Repository import TypesRepository, PlantRepository, TemplatesRepository, DeviceRepository, UserRepository
 from ..database import db
 from ..Models.Type import BaseType, GetType
@@ -184,3 +186,21 @@ class TemplatesService:
             "m": date.month if date.month > 9 else f"0{date.month}",
             "full": date.strftime("%d.%m.%Y")
         }
+
+    def delete_template(self, id_temp: int):
+        template_entity = self.__template_repository.get_template(id_temp)
+
+        try:
+            os.remove(Path(template_entity.path_template_docx_file))
+        except OSError:
+            pass
+        try:
+            os.remove(Path(template_entity.path_form_xlsx_file))
+        except OSError:
+            pass
+        try:
+            os.remove(Path(template_entity.path_map_data_json_file))
+        except OSError:
+            pass
+
+        self.__template_repository.delete_template(id_temp)

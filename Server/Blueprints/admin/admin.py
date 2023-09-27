@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for
 from Server.Services.TemplatesServices import TemplatesService
 from Server.Services.DeviceServices import DeviceServices
+from Server.Services.UserService import UserService
 from flask_login import current_user, login_required
 
 
@@ -18,8 +19,9 @@ def is_admin():
 
 
 menu = [
-    {'url': '.templates', 'title': "шаблоны документов"},
-    {'url': '.devices', 'title': "список приборов"}
+    {'url': '.templates', 'title': "Шаблоны документов"},
+    {'url': '.devices', 'title': "Список приборов"},
+    {'url': '.users', 'title': "Пользователи"}
 ]
 
 
@@ -59,6 +61,15 @@ def add_templates():
 
             template_service.add_template(name_template, type_template, plant, file)
             return redirect(url_for(".templates"))
+
+
+@admin_router.route("/templates/delete/<int:id_temp>", methods=["GET"])
+@login_required
+def delete_template(id_temp):
+    template_service = TemplatesService()
+    if request.method == 'GET':
+        template_service.delete_template(id_temp)
+        redirect(url_for(".templates"))
 
 
 @admin_router.route("/devices", methods=["GET"])
@@ -113,3 +124,39 @@ def from_type_devices():
     if request.method == "POST":
         device_service.add_type_device(request.form["name"])
         return redirect(url_for('.devices'))
+
+
+@admin_router.route("/users",  methods=["GET"])
+@login_required
+def users():
+    user_service = UserService()
+    if request.method == "GET":
+        return render_template("user_page.html", menu=menu, users=user_service.get_list_users())
+
+
+@admin_router.route("/add_user",  methods=["POST", "GET"])
+@login_required
+def add_user():
+    user_service = UserService()
+    if request.method == "GET":
+        roles = user_service.get_list_roles()
+        return render_template("form_user_page.html", menu=menu, is_add=True, user={"id": 1}, roles=roles)
+    elif request.method == "POST":
+        user_service.add_user(request.form)
+        return redirect(url_for(".users"))
+
+
+@admin_router.route("/delete_user/<int:id_user>",  methods=["GET"])
+@login_required
+def delete_user(id_user):
+    user_service = UserService()
+    if request.method == "GET":
+        user_service.delete_user(id_user)
+        return redirect(url_for(".users"))
+
+
+@admin_router.route("/update_user/<int:id_user>",  methods=["PUT", "GET"])
+@login_required
+def update_user(id_user):
+    if request.method == "GET":
+        return render_template("form_user_page.html", menu=menu, user={"id": 1}, is_add=False)

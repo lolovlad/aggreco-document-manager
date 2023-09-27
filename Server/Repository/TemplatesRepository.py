@@ -25,4 +25,13 @@ class TemplatesRepository:
     def get_template(self, id_template: int) -> Templates | None:
         return self.__session.get(Templates, id_template)
 
+    def delete_template(self, id_temp: int):
+        template = self.get_template(id_temp)
+        try:
+            self.__session.delete(template)
+            self.__session.commit()
+        except:
+            self.__session.rollback()
+
+
 
