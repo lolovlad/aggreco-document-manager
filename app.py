@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_migrate import Migrate
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from Server.database import db, User, Role, RolesUsers
 
 from Server.Models.UserSession import UserSession, GetUser
@@ -37,7 +37,15 @@ def load_user(id_user) -> UserSession:
 
 @app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html", exception="")
+    if current_user.is_authenticated:
+        user_roles = [i.name for i in current_user.user.roles]
+        print(user_roles)
+        if "user" in user_roles:
+            return redirect("/user")
+        else:
+            return redirect("/admin")
+    else:
+        return render_template("index.html", exception="")
 
 
 @app.route("/login", methods=["POST"])
@@ -98,6 +106,13 @@ def create_user_admin(password):
             db.session.commit()
 
             return redirect(url_for("index"))
+
+
+@app.route("/logout", methods=["GET"])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":

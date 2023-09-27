@@ -78,3 +78,5 @@ def add_templates():
 
             template_service.add_template(name_template, type_template, plant, file)
             return redirect(url_for(".templates"))
+
+
