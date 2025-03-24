@@ -1,20 +1,13 @@
 import datetime
+from uuid import uuid4
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
 db = SQLAlchemy()
-
-
-class RolesUsers(db.Model):
-    __tablename__ = 'roles_users'
-    __table_args__ = {'extend_existing': True}
-    id = Column(Integer(), primary_key=True)
-    user_id = Column(ForeignKey("users.id"))
-    role_id = Column(ForeignKey("roles.id"))
 
 
 class Role(db.Model):
@@ -36,9 +29,8 @@ class User(db.Model, UserMixin):
 
     job_title = Column(String, nullable=False)
     painting = Column(String, nullable=True, default="none")
-
-    roles = relationship('Role', secondary="roles_users", backref=db.backref('users', lazy='dynamic'))
-
+    id_role = Column(ForeignKey("roles.id"))
+    role = relationship('Role')
 
     @property
     def password(self):
@@ -98,3 +90,51 @@ class Device(db.Model):
     certificate_number = Column(String, nullable=True, default="-")
 
     type = relationship("TypeDevice")
+
+
+class TypeEquipment(db.Model):
+    __tablename__ = "type_equipment"
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    code = Column(String, unique=True, nullable=False)
+    name = Column(String(255), nullable=False, unique=True)
+    description = Column(String(128), nullable=True)
+
+
+class Equipment(db.Model):
+    __tablename__ = "equipment"
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    uuid = Column(String, unique=True)
+    code = Column(String, nullable=False, unique=True)
+    id_type = Column(ForeignKey("type_equipment.id"))
+    type = relationship("TypeEquipment", lazy="joined")
+    description = Column(Text, nullable=True)
+
+    is_delite = Column(Boolean, default=False, nullable=True, server_default="False")
+
+
+class StateClaim(db.Model):
+    __tablename__ = "state_claim"
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    name = Column(String(32), nullable=False, unique=True)
+    description = Column(String(128), nullable=True)
+
+
+class Claim(db.Model):
+    __tablename__ = "claim"
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    uuid = Column(String, unique=True)
+
+    datetime = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.now)
+
+    id_state_claim = Column(ForeignKey("state_claim.id"))
+    state_claim = relationship(StateClaim, lazy="joined")
+
+    id_user = Column(ForeignKey("users.id"))
+    user = relationship(User, lazy="joined")
+
+    main_document = Column(String, nullable=True)
+
+    comment = Column(Text, nullable=True, default="Нет")
+
+    id_equipment = Column(ForeignKey("equipment.id"))
+    equipment = relationship(Equipment, lazy="joined")

@@ -24,42 +24,38 @@ class ParserTemplateFile:
         return self.__map_data
 
     def parser(self):
-        id_protocol = 1
+        id_protocol = 0
         tables = self.__file.get_all_parser_table_in_file(r'(?<={{).*?(?=}})')
         tables_in_protocol = []
 
         table_workers = None
+        table_equipment = None
+        table_comment = None
 
-        index_table = 1 + self.__skip_top_table
-
-        while index_table < len(tables):
-            table = tables[index_table]
-            if self.__is_end_protocol(table[0][0]):
+        for i, table in tables:
+            if i == "data_table":
+                tables_in_protocol.append(table)
+            elif i == "devices_table":
                 table_equipment = table
-                if table_workers is None:
-                    table_workers = tables[index_table + 2]
-
-                key_remark = self.__get_key_remark_field(tables[index_table + 1])
+            elif i == "worker_table":
+                table_workers = table
+                id_protocol += 1
+                key_remark = self.__get_key_remark_field(table_comment)
 
                 protocol = self.__create_protocol(f"{id_protocol}",
                                                   tables_in_protocol,
                                                   table_equipment,
                                                   key_remark)
 
-                id_protocol += 1
                 tables_in_protocol.clear()
-                index_table += (self.__skip_bottom_table + self.__skip_top_table)
                 self.__file_schema.protocols.append(protocol)
-            else:
-                tables_in_protocol.append(table)
-                index_table += 1
-        self.__file_schema.list_workers = self.__get_list_workers(table_workers)
+                self.__file_schema.list_workers = self.__get_list_workers(table_workers)
+            elif i == "comment_table":
+                table_comment = table
 
 
     def __get_key_remark_field(self, table: Table):
         return table[1][1].text
-
-
     def __is_end_protocol(self, cell):
         search_str = "".join(cell.text.split())
         return len(cell.text) > 0 and search_str == self.__re_end_table

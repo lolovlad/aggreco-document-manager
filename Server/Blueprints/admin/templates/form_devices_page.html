@@ -5,43 +5,36 @@
 <div class="container justify-content-center form__sigin">
     <div class="row align-items-center form__sigin__row">
       <div class="col align-self-center">
-        {% if is_add %}
-            <form method="post" action="{{url_for(url)}}">
-        {% else %}
-            <form method="post" action="{{url_for(url, id_device=id_dev)}}">
-        {% endif %}
+        <form method="post">
+          {{ form.hidden_tag() }}
           <div class="mb-3">
-            <label for="name" class="form-label">Название</label>
-            <input type="text" name="name" class="form-control" id="name">
-          </div>
-          <select name="type" class="form-select">
-            <option disabled>выбирите тип прибора</option>
-            {% for i in type_dev %}
-                <option value="{{i.id}}">{{i.name}}</option>
-            {% endfor %}
-          </select>
-          <div class="mb-3">
-            <label for="number" class="form-label">Заводской номер</label>
-            <input type="text" name="number" class="form-control" id="number"/>
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
           </div>
           <div class="mb-3">
-            <label for="date_verification" class="form-label">Дата поверки</label>
-            <input type="date" name="date_verification" class="form-control" id="date_verification"/>
+            {{ form.type.label(class="form-label") }}
+            {{ form.type(class="form-select") }}
           </div>
           <div class="mb-3">
-            <label for="date_next_verification" class="form-label">Дата следующей поверки</label>
-            <input type="date" name="date_next_verification" class="form-control" id="date_next_verification"/>
+            {{ form.number.label(class="form-label") }}
+            {{ form.number(class="form-control") }}
           </div>
           <div class="mb-3">
-            <label for="certificate_number" class="form-label">Номер свидетельства</label>
-            <input type="text" name="certificate_number" class="form-control" id="certificate_number"/>
+            {{ form.date_verification.label(class="form-label") }}
+            {{ form.date_verification(class="form-control") }}
           </div>
-            <button type="submit" class="btn btn-primary">Вход</button>
+          <div class="mb-3">
+            {{ form.date_next_verification.label(class="form-label") }}
+            {{ form.date_next_verification(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.certificate_number.label(class="form-label") }}
+            {{ form.certificate_number(class="form-control") }}
+          </div>
+            <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
         </form>
       </div>
     </div>
   </div>
-    <button type=submit>Добавить</button>
-</form>
 
 {% endblock %}

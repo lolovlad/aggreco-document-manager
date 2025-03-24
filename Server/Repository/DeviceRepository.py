@@ -16,6 +16,9 @@ class DeviceRepository:
     def get_device(self, id_device: int) -> Device | None:
         return self.__session.get(Device, id_device)
 
+    def get_device_by_nuber(self, num: str) -> Device | None:
+        return self.__session.query(Device).filter(Device.number == num).first()
+
     def add_device(self, device: BaseDevice):
         device_entity = Device()
         device_dict = device.model_dump()
@@ -46,3 +49,18 @@ class DeviceRepository:
             return self.__session.query(Device).filter(Device.id_type == id_type.id).all()
         except AttributeError:
             return []
+
+    def delete_device(self, id_device: int):
+        device = self.get_device(id_device)
+        try:
+            self.__session.delete(device)
+            self.__session.commit()
+        except:
+            self.__session.rollback()
+
+    def update(self, device: Device):
+        try:
+            self.__session.add(device)
+            self.__session.commit()
+        except:
+            self.__session.rollback()

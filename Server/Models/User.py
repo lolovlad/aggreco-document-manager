@@ -1,11 +1,6 @@
 from pydantic import BaseModel
 
 
-class RolesUsers(BaseModel):
-    user_id: int
-    role_id: int
-
-
 class BaseRole(BaseModel):
     name: str
     description: str
@@ -22,11 +17,12 @@ class BaseUser(BaseModel):
     email: str
     job_title: str
     painting: str
+    id_role: int
 
 
 class GetUser(BaseUser):
     id: int
-    roles: list[GetRole]
+    role: GetRole
 
 
 class PostUser(BaseUser):

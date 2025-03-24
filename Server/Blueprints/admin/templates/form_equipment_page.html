@@ -1,0 +1,29 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+
+<div class="container justify-content-center form__sigin">
+    <div class="row align-items-center form__sigin__row">
+      <div class="col align-self-center">
+        <form method="post" >
+           {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.code.label(class="form-label") }}
+            {{ form.code(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.type.label(class="form-label") }}
+            {{ form.type(class="form-select") }}
+          </div>
+          <div class="mb-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control") }}
+          </div>
+            <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
+        </form>
+      </div>
+    </div>
+</div>
+
+
+{% endblock %}

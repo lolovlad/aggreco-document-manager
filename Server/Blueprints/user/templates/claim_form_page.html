@@ -1,0 +1,24 @@
+{% extends 'base_user.html'  %}
+
+{% block content %}
+
+<div class="container justify-content-center form__sigin">
+    <div class="row align-items-center form__sigin__row">
+      <div class="col align-self-center">
+          <a class="btn btn-success" href="{{url_for('.send_claim', uuid_claim=claim.uuid)}}">Отправить на проверку</a>
+        <form method="post" enctype=multipart/form-data>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{form.description.label(class="form-label")}}
+                {{form.description(class="form-control", readonly=true)}}
+            </div>
+            <div class="mb-3">
+                {{ form.file.label(class="form-label") }}
+                {{ form.file(class="form-control") }}
+            </div>
+            <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock %}

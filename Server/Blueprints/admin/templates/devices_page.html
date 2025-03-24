@@ -4,7 +4,7 @@
 <div class="container table__container">
     <div class="row">
         <div class="d-grid gap-2 d-md-block">
-            <a class="btn btn-success" href="{{url_for('.add_devices')}}">добавить прибор</a>
+            <a class="btn btn-success" href="{{url_for('.manage_device')}}">добавить прибор</a>
             <a class="btn btn-success" href="{{url_for('.from_type_devices')}}">добавить новый тип</a>
         </div>
     </div>
@@ -18,6 +18,7 @@
                   <th scope="col">Сертификат</th>
                   <th scope="col">Дата проверки</th>
                   <th scope="col">Дата след проверки</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +30,10 @@
                 <td>{{device.certificate_number}}</td>
                 <td>{{device.date_verification}}</td>
                 <td>{{device.date_next_verification}}</td>
+                  <td>
+                      <a class="btn btn-danger" href="{{url_for('.delete_device', id_device=device.id)}}">Удалить</a>
+                      <a class="btn btn-success" href="{{url_for('.manage_device', devices_id=device.id)}}">Редактировать</a>
+                  </td>
               </tr>
             {% endfor %}
             </tbody>

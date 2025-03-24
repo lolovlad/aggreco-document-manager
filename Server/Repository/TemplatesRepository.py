@@ -19,6 +19,13 @@ class TemplatesRepository:
         except Exception:
             self.__session.rollback()
 
+    def update_template(self, template: Templates):
+        try:
+            self.__session.add(template)
+            self.__session.commit()
+        except Exception:
+            self.__session.rollback()
+
     def get_templates(self) -> list[Templates] | None:
         return self.__session.query(Templates).all()
 

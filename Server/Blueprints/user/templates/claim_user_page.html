@@ -1,0 +1,35 @@
+{% extends 'base_user.html' %}
+
+{% block content %}
+<div class="container table__container">
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th scope="col">Дата и время</th>
+                  <th scope="col">Автор</th>
+                  <th scope="col">Документ</th>
+                  <th scope="col">Состояние заявки </th>
+                  <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for claim in claims %}
+              <tr>
+                <th>{{claim.datetime.strftime('%d.%m.%Y')}}</th>
+                <td>{{claim.user.surname}} {{claim.user.name[0]}}. {{claim.user.patronymics[0]}}</td>
+                  <td><a href="{{url_for('.download_claim', uuid_claim=claim.uuid)}}">Отчет</a></td>
+                <td>{{claim.state_claim.description}}</td>
+                <td>
+                    {% if claim.state_claim.name == 'under_development' or claim.state_claim.name == 'draft' %}
+                        <a class="btn btn-success" href="{{url_for('.manage_claim', uuid_claim=claim.uuid)}}">Редактировать</a>
+                        <a class="btn btn-danger" href="{{url_for('.delete_claim', uuid_claim=claim.uuid)}}">Удалить</a>
+                    {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

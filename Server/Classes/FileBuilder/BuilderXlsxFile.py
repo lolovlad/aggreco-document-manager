@@ -21,7 +21,7 @@ class BuilderXlsxFile(BuilderFile):
         for id_protocol, target_protocol in enumerate(self.__file_schemas.protocols):
             self.__file.create_sheet(target_protocol)
 
-            bias = 0
+            bias = 5
             last_y_cell = 0
 
             self.__json_data_schema[target_protocol.name] = {}
@@ -48,7 +48,6 @@ class BuilderXlsxFile(BuilderFile):
                         self.__file.create_cell(x, y, cell.text)
                 self.add_to_table(id_protocol, id_table, new_cells)
                 last_y_cell = y - 2
-                bias += 10
         self.save_file()
 
     def add_to_table(self, id_protocol: int, id_table: int, new_cells: list):

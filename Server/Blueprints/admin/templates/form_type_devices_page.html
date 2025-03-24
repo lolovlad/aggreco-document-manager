@@ -5,12 +5,13 @@
 <div class="container justify-content-center form__sigin">
     <div class="row align-items-center form__sigin__row">
       <div class="col align-self-center">
-        <form method="post" action="{{url_for('.from_type_devices')}}">
+        <form method="post">
+           {{ form.hidden_tag() }}
           <div class="mb-3">
-            <label for="name" class="form-label">Название</label>
-            <input type="text" name="name" class="form-control" id="name"/>
+            {{ form.type_device.label(class="form-label") }}
+            {{ form.type_device(class="form-control") }}
           </div>
-            <button type="submit" class="btn btn-primary">Вход</button>
+            <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
         </form>
       </div>
     </div>

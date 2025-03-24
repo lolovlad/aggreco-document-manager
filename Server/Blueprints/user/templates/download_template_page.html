@@ -21,7 +21,7 @@
                 <td>{{templete.type.name}}</td>
                 <td>{{templete.plant.name}}</td>
                 <td><a href="{{url_for('.download_templates', id_template=templete.id)}}">скачать таблицу шаблона</a></td>
-                <td><a href="{{url_for('.create_document', id_template=templete.id)}}">сгенерировать документ</a></td>
+                <td><a href="{{url_for('.create_claim', id_template=templete.id)}}">Создать отчет по документу</a></td>
               </tr>
             {% endfor %}
             </tbody>

@@ -1,0 +1,27 @@
+{% extends 'base_user.html'  %}
+
+{% block content %}
+
+<div class="container justify-content-center form__sigin">
+    <div class="row align-items-center form__sigin__row">
+      <div class="col align-self-center">
+          {% if claim.state_claim.name != 'accepted' %}
+            <a class="btn btn-danger" href="{{url_for('.send_claim', uuid_claim=claim.uuid, type_state='under_development')}}">Отправить на доработку</a>
+            <a class="btn btn-success" href="{{url_for('.send_claim', uuid_claim=claim.uuid, type_state='accepted')}}">Согласовать</a>
+          {% endif %}
+        <form method="post" enctype=multipart/form-data>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{form.description.label(class="form-label")}}
+                {{form.description(class="form-control")}}
+            </div>
+            <div class="mb-3">
+                {{ form.file.label(class="form-label") }}
+                {{ form.file(class="form-control") }}
+            </div>
+            <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock %}

@@ -15,15 +15,28 @@ from .File import File
 
 class DocxFile(File):
     def __init__(self, path: Path):
+        self.__path: Path = path
         self.__file: Document = Document(path)
 
-    def get_all_parser_table_in_file(self, re: str) -> list[CustomTable]:
+    def get_all_parser_table_in_file(self, re: str) -> list[tuple[str, CustomTable]]:
         tables = self.__file.tables
-        custom_tables = []
-        for table in tables:
+        id_custom_table = []
+        for i, table in enumerate(tables):
             if self.is_table_schema(table, re):
                 custom_table = self.__create_table(table)
-                custom_tables.append(custom_table)
+                key_table = self.__get_key_table(custom_table[0][0])
+                if key_table is not None:
+                    table = self.delete_system_row(i)
+                    id_custom_table.append((key_table, i))
+
+        self.__file.save(self.__path)
+        self.__file = Document(self.__path)
+        tables = self.__file.tables
+
+        custom_tables = []
+        for key_table, i in id_custom_table:
+            custom_table = self.__create_table(tables[i])
+            custom_tables.append((key_table, custom_table))
         return custom_tables
 
     def render(self, schemas: dict):
@@ -50,6 +63,19 @@ class DocxFile(File):
                 cell_loc = self.__get_coord_cell(cell)
                 cells.add((cell.text, *cell_loc))
         return cells
+
+    def delete_system_row(self, id_table: int) -> Table:
+        self.__file.tables[id_table]._tbl.remove(self.__file.tables[id_table].rows[0]._tr)
+        return self.__file.tables[id_table]
+
+    def __get_key_table(self, cell) -> str | None:
+        key_str = "".join(cell.text.split()).lower()
+        main = key_str.split("_")
+        if len(main) > 1:
+            if main[1] == "table":
+                return key_str
+        return None
+
     def __get_coord_cell(self, cell):
         tc = cell._tc
         try:

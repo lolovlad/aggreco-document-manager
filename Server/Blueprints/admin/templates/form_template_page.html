@@ -5,32 +5,28 @@
 <div class="container justify-content-center form__sigin">
     <div class="row align-items-center form__sigin__row">
       <div class="col align-self-center">
-        <form method="post" enctype=multipart/form-data action="/admin/templates/add">
-          <div class="mb-3">
-             <label for="file" class="form-label">Загрузить шаблон</label>
-             <input class="form-control" type="file" id="file" name="file">
-          </div>
-          <div class="mb-3">
-            <label for="name" class="form-label">Название шаблона</label>
-            <input type="text" name="name" class="form-control" id="name"/>
-          </div>
-          <div class="mb-3">
-            <select name="type" class="form-select">
-              <option disabled>выбирите тип шаблона</option>
-              {% for i in types %}
-                  <option value="{{i.id}}">{{i.name}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="mb-3">
-            <select name="plant" class="form-select">
-                <option disabled>выбирите тип устройство</option>
-                {% for i in plants %}
-                    <option value="{{i.id}}">{{i.name}}</option>
-                {% endfor %}
-              </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Вход</button>
+        <form method="post" enctype=multipart/form-data>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.file.label(class="form-label") }}
+                {{ form.file(class="form-control") }}
+                {% if template and template.path_template_docx_file %}
+                    <p>Текущий файл: <a href="{{ url_for('download', filename=template.path_template_docx_file.split('/')[-1]) }}" target="_blank">Посмотреть</a></p>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-control") }}
+            </div>
+            <div class="mb-3">
+                {{ form.types.label(class="form-label") }}
+                {{ form.types(class="form-select") }}
+            </div>
+            <div class="mb-3">
+                {{ form.plant.label(class="form-label") }}
+                {{ form.plant(class="form-select") }}
+            </div>
+          <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
         </form>
       </div>
     </div>

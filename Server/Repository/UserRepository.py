@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from ..database import User, Role, RolesUsers
+from ..database import User, Role
 from ..Models.User import PostUser
 
 
@@ -26,16 +26,12 @@ class UserRepository:
             surname=user.surname,
             patronymics=user.patronymics,
             email=user.email,
-            job_title=user.job_title
+            job_title=user.job_title,
+            id_role=user.id_role
         )
         user_entity.password = user.password
         try:
             self.__session.add(user_entity)
-            self.__session.commit()
-            self.__session.add(RolesUsers(
-                user_id=user_entity.id,
-                role_id=user.id_role
-            ))
             self.__session.commit()
         except:
             self.__session.rollback()
@@ -44,6 +40,16 @@ class UserRepository:
         try:
             user = self.get_user(id_user)
             self.__session.delete(user)
+            self.__session.commit()
+        except:
+            self.__session.rollback()
+
+    def get_role(self, id_role) -> Role | None:
+        return self.__session.get(Role, id_role)
+
+    def update_user(self, user: User):
+        try:
+            self.__session.add(user)
             self.__session.commit()
         except:
             self.__session.rollback()

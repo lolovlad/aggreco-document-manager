@@ -2,8 +2,17 @@
 
 {% block content %}
 <div class="container form__template__generate">
-    <form method="POST" action="{{url_for('.create_document', id_template=id_template)}}" enctype=multipart/form-data>
+    <form method="POST" action="{{url_for('.create_claim', id_template=id_template)}}" enctype=multipart/form-data>
         <div class="list-group">
+            <div class="mb-3">
+                <label for="select_equipment" class="form-label">Выбирите оборудованние</label>
+                <select name="select_equipment" class="form-select">
+                    <option disabled>Выбирите оборудованние</option>
+                    {% for i in equipments %}
+                        <option value="{{i.uuid}}">{{i.code}}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <div class="mb-3">
                 <label for="file" class="form-label">Загрузить таблицу данных</label>
                 <input class="form-control" type="file" id="file" name="file">
@@ -13,9 +22,6 @@
                 <input class="form-control" type="date" id="date" name="date">
             </div>
             <div class="mb-3">
-                <label for="object" class="form-label">Название установки</label>
-                <input class="form-control" type="text" id="object" name="object">
-            </div>
             {% for protocol in form_scheme.protocols %}
                 <div class="list-group-item">
                     <h3>Протокол {{ protocol.name }}</h3>
@@ -46,21 +52,17 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                    <textarea type="text" name="{{protocol.remark}}" placeholder="Замечания" class="form-control">Нет</textarea>
+                    <div class="mb-3">
+                        <label for="{{protocol.remark}}" class="form-label">Замечания</label>
+                        <textarea type="text" name="{{protocol.remark}}" placeholder="Замечания" class="form-control">Нет</textarea>
+                    </div>
                 </div>
             {% endfor %}
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </div>
         </div>
-        {% for j in form_scheme.list_workers %}
-        <div class="mb-3">
-            <select name="user_{{loop.index}}" class="form-select">
-                <option disabled>Выбирите работника</option>
-                {% for i in users %}
-                    <option value="{{i.id}}">{{i.name}} {{i.surname}} {{i.patronymics}}</option>
-                {% endfor %}
-            </select>
-        </div>
-        {% endfor %}
-    <button type="submit" class="btn btn-primary">Сгенерировать</button>
     </form>
 </div>
 {% endblock %}
